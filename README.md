@@ -22,9 +22,12 @@
 在 DSH 里用插件管理器安装本地 bundle：
 
 ```bash
+git clone https://github.com/Destinhue/dsh-whale-privacy.git
 # 由 DSH 的 plugin_manager 执行，等价于：
 # install_bundle target=/path/to/dsh-whale-privacy
 ```
+
+也可以下载 [v0.1.0 release zip](https://github.com/Destinhue/dsh-whale-privacy/releases/tag/v0.1.0)，解压后把 `install_bundle` 指向解压目录。
 
 或在 `~/.dsh/profiles/<profile>/cordis.patch.yml` 里检查是否已有：
 

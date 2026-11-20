@@ -44,5 +44,13 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "author": "DSH"
+  "author": "DSH",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Destinhue/dsh-whale-privacy.git"
+  },
+  "homepage": "https://github.com/Destinhue/dsh-whale-privacy",
+  "bugs": {
+    "url": "https://github.com/Destinhue/dsh-whale-privacy/issues"
+  }
 }
