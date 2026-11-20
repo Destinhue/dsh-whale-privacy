@@ -1,6 +1,6 @@
 {
   "name": "dsh-whale-privacy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Audience-aware privacy guard for DSH: stops private facts from reaching groups or public posts, keeps an encrypted scoped vault, and leaves a tamper-evident audit trail.",
   "type": "module",
   "main": "./index.js",

@@ -1,7 +1,7 @@
 {
   "name": "dsh-whale-privacy",
   "description": "Audience-aware privacy guard: private facts cannot reach groups or public posts, encrypted scoped vault, tamper-evident audit.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "entry": {
     "name": "dsh-whale-privacy",
     "inject": [

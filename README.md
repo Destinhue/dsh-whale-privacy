@@ -27,7 +27,7 @@ git clone https://github.com/Destinhue/dsh-whale-privacy.git
 # install_bundle target=/path/to/dsh-whale-privacy
 ```
 
-也可以下载 [v0.1.0 release zip](https://github.com/Destinhue/dsh-whale-privacy/releases/tag/v0.1.0)，解压后把 `install_bundle` 指向解压目录。
+也可以下载 [v0.1.1 release zip](https://github.com/Destinhue/dsh-whale-privacy/releases/tag/v0.1.1)，解压后把 `install_bundle` 指向解压目录。
 
 或在 `~/.dsh/profiles/<profile>/cordis.patch.yml` 里检查是否已有：
 
@@ -102,7 +102,7 @@ const { allowed } = privacy.recall({ audience: 'group', scope: `qq:group:${group
 
 - `privacy_status` 返回 `enabled: true`、`action: deny`、`vault: 0 条 · AES-256-GCM 加密`、`audit: 1 条 · chain OK`。
 - 对 `send_message` 发送一个假的 `sk-...` 测试串，宿主返回：“出站内容包含密钥/凭据（secret），已由隐私闸门阻止。”审计新增 `outbound-blocked`，`reasons: ["secret:1"]`，不含原文。
-- 私聊/群聊/公开三种受众的召回隔离、加密落盘、审计篡改检测由 19 项单元测试覆盖。
+- 私聊/群聊/公开三种受众的召回隔离、加密落盘、审计篡改检测由 20 项单元测试覆盖。
 
 ## 边界
 
@@ -120,7 +120,7 @@ const { allowed } = privacy.recall({ audience: 'group', scope: `qq:group:${group
 node --test test/*.test.js
 ```
 
-当前 19 项：检测器、配置/受众推断、加密库、审计链、插件装配与 pre/post 钩子。
+当前 20 项：检测器、配置/受众推断、加密库、审计链、插件装配与 pre/post 钩子。
 
 ## 数据
 

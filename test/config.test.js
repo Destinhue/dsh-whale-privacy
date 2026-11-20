@@ -89,3 +89,16 @@ test('unknown audience defaults to warn, can be raised to block or lowered to al
   assert.equal(allow.wouldBlock, false);
   assert.equal(allow.warned.length, 0);
 });
+
+
+test('private chats still block credentials and local paths', () => {
+  const config = normalizeConfig({});
+  const d = evaluate({
+    tool: 'qq_send_private_message',
+    args: { peer_id: 'u1', message: '看这个 /Users/alice/secret.txt' },
+    config,
+  });
+  assert.equal(d.audience, 'private');
+  assert.equal(d.wouldBlock, true);
+  assert.deepEqual(d.blocked.map((item) => item.category), ['path']);
+});
