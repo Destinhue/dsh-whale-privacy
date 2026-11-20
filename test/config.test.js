@@ -25,7 +25,7 @@ test('audience inference prefers explicit group/private args over names', () => 
   assert.equal(inferAudience('mystery_tool', { payload: 'x' }).audience, 'unknown');
 });
 
-test('private terms are blocked for groups and allowed for private', () => {
+test('private terms are blocked for groups and non-owner DMs, allowed for owner', () => {
   const config = normalizeConfig({ pii: 'block' });
   const terms = ['朝阳区'];
   const group = evaluate({
@@ -39,15 +39,27 @@ test('private terms are blocked for groups and allowed for private', () => {
   assert.deepEqual(group.blocked.map((item) => item.category).sort(), ['pii', 'private-term']);
   assert.match(group.reason, /阻止/);
 
-  const privateDm = evaluate({
+  const nonOwner = evaluate({
     tool: 'qq_send_private_message',
     args: { peer_id: 'u1', message: '他住在朝阳区，电话 13800138000' },
     config,
     terms,
   });
-  assert.equal(privateDm.audience, 'private');
-  assert.equal(privateDm.wouldBlock, false);
-  assert.equal(privateDm.counts['private-term'], 1);
+  assert.equal(nonOwner.audience, 'private');
+  assert.equal(nonOwner.owner, false);
+  assert.equal(nonOwner.wouldBlock, true);
+  assert.match(nonOwner.reason, /主人/);
+  assert.deepEqual(nonOwner.blocked.map((item) => item.category).sort(), ['pii', 'private-term']);
+
+  const owner = evaluate({
+    tool: 'qq_send_private_message',
+    args: { peer_id: 'owner', message: '他住在朝阳区，电话 13800138000' },
+    config,
+    terms,
+  });
+  assert.equal(owner.owner, true);
+  assert.equal(owner.wouldBlock, false);
+  assert.equal(owner.counts['private-term'], 1);
 });
 
 test('secret always blocks even in private', () => {
@@ -74,6 +86,37 @@ test('explicit audience override wins over inference', () => {
   assert.equal(decision.wouldBlock, false);
 });
 
+test('private owner-only policy can be disabled, and owner IDs are configurable', () => {
+  const terms = ['朝阳区'];
+  const open = normalizeConfig({ privateRequiresOwner: false });
+  const allowed = evaluate({
+    tool: 'qq_send_private_message',
+    args: { peer_id: 'u1', message: '朝阳区' },
+    config: open,
+    terms,
+  });
+  assert.equal(allowed.wouldBlock, false);
+
+  const custom = normalizeConfig({ owners: ['123456'] });
+  const owner = evaluate({
+    tool: 'qq_send_private_message',
+    args: { peer_id: '123456', message: '朝阳区' },
+    config: custom,
+    terms,
+  });
+  assert.equal(owner.owner, true);
+  assert.equal(owner.wouldBlock, false);
+
+  const other = evaluate({
+    tool: 'qq_send_private_message',
+    args: { peer_id: '654321', message: '朝阳区' },
+    config: custom,
+    terms,
+  });
+  assert.equal(other.owner, false);
+  assert.equal(other.wouldBlock, true);
+});
+
 
 test('unknown audience defaults to warn, can be raised to block or lowered to allow', () => {
   const args = { message: '他住在朝阳区' };
@@ -95,7 +138,7 @@ test('private chats still block credentials and local paths', () => {
   const config = normalizeConfig({});
   const d = evaluate({
     tool: 'qq_send_private_message',
-    args: { peer_id: 'u1', message: '看这个 /Users/alice/secret.txt' },
+    args: { peer_id: 'owner', message: '看这个 /Users/alice/secret.txt' },
     config,
   });
   assert.equal(d.audience, 'private');

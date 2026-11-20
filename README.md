@@ -52,6 +52,8 @@ git clone https://github.com/Destinhue/dsh-whale-privacy.git
     paths: block
     secrets: block
     privateTerms: block
+    privateRequiresOwner: true # 私聊内容只允许发给主人
+    owners: ['owner']    # 追加真实主人 ID，例如 ['owner', '123456']
     unknownAudience: warn # block | warn | allow
     resultRedaction: secrets # off | secrets | secrets-pii
     outboundTools:
@@ -71,7 +73,7 @@ git clone https://github.com/Destinhue/dsh-whale-privacy.git
 | 工具名/参数含 `peer_id`、`private`、`dm`、`recipient` | private |
 | 都没有 | unknown（默认只警告；`unknownAudience: block` 升级为拒绝，`allow` 只保留密钥拦截） |
 
-`private` 只拦密钥和本机路径；私密短语在私聊里正是要说的内容。`unknown` 默认不会静默放行：会写一条 `outbound-warned` 审计并计数，只是不阻断调用。
+`private` 默认是 **owner-only**：`targetId` 命中 `owners`（默认 `owner`/`master`/`主人`）才允许私密短语和 PII 通过；发给其他私聊对象会按私密短语/PII 拦截，并把原因写成“仅允许发给主人”。密钥和本机路径即使对主人也仍会拦截。把 `privateRequiresOwner` 设为 `false` 可恢复“私聊不限制”的旧行为。`unknown` 默认不会静默放行：会写一条 `outbound-warned` 审计并计数，只是不阻断调用。
 
 ## 工具
 

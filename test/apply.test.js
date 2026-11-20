@@ -68,9 +68,17 @@ test('pre-execute denies a group send containing a private term', async () => {
   assert.match(deny.reason, /私聊/);
   assert.equal(nextCalled, false);
 
-  const allow = await handlers.get('tools/pre-execute')({
+  const blockedPrivate = await handlers.get('tools/pre-execute')({
     name: 'qq_send_private_message',
     arguments: { peer_id: 'u1', message: '他住在朝阳区' },
+  }, next);
+  assert.equal(blockedPrivate.kind, 'deny');
+  assert.match(blockedPrivate.reason, /主人/);
+  assert.equal(nextCalled, false);
+
+  const allow = await handlers.get('tools/pre-execute')({
+    name: 'qq_send_private_message',
+    arguments: { peer_id: 'owner', message: '他住在朝阳区' },
   }, next);
   assert.equal(allow.kind, 'allow');
   assert.equal(nextCalled, true);

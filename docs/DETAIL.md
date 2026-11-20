@@ -2,7 +2,7 @@
 
 Audience-aware privacy for DSH agents.
 
-- Private facts stay private: `tools/pre-execute` checks outbound calls using the audience inferred from `group_id` / `peer_id` / `comment`.
+- Private facts stay private: `tools/pre-execute` checks outbound calls using the audience inferred from `group_id` / `peer_id` / `comment`. Private DMs are owner-only by default; a non-owner private recipient is blocked just like a group.
 - Six tools: `privacy_status`, `privacy_scan`, `privacy_remember`, `privacy_recall`, `privacy_forget`, `privacy_audit`.
 - Encrypted scoped vault (AES-256-GCM) with `private` / `group` / `public` labels.
 - Hash-chain audit with categories, never message text.
