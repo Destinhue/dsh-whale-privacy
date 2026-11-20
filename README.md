@@ -66,9 +66,9 @@
 | 工具名/参数含 `group_id`、`room_id`、`chat_id`、`群` | group |
 | 工具名/参数含 `comment`、`post`、`publish`、`dynamic` | public |
 | 工具名/参数含 `peer_id`、`private`、`dm`、`recipient` | private |
-| 都没有 | unknown（默认只警告，可配成 block） |
+| 都没有 | unknown（默认只警告；`unknownAudience: block` 升级为拒绝，`allow` 只保留密钥拦截） |
 
-`private` 只拦密钥和本机路径；私密短语在私聊里正是要说的内容。
+`private` 只拦密钥和本机路径；私密短语在私聊里正是要说的内容。`unknown` 默认不会静默放行：会写一条 `outbound-warned` 审计并计数，只是不阻断调用。
 
 ## 工具
 
@@ -93,6 +93,14 @@ const { allowed } = privacy.recall({ audience: 'group', scope: `qq:group:${group
 
 如果继续用 `dsh-familiar-memory` / `dsh-self-improved`，请确认它们的召回按会话/受众隔离，或把本插件作为唯一召回入口。
 
+## 已实测
+
+在 desktop profile 安装后：
+
+- `privacy_status` 返回 `enabled: true`、`action: deny`、`vault: 0 条 · AES-256-GCM 加密`、`audit: 1 条 · chain OK`。
+- 对 `send_message` 发送一个假的 `sk-...` 测试串，宿主返回：“出站内容包含密钥/凭据（secret），已由隐私闸门阻止。”审计新增 `outbound-blocked`，`reasons: ["secret:1"]`，不含原文。
+- 私聊/群聊/公开三种受众的召回隔离、加密落盘、审计篡改检测由 19 项单元测试覆盖。
+
 ## 边界
 
 - 不做语义级 DLP：模型改写“朝阳区”为“东边那个区”时拦不住。
@@ -109,7 +117,7 @@ const { allowed } = privacy.recall({ audience: 'group', scope: `qq:group:${group
 node --test test/*.test.js
 ```
 
-当前 18 项：检测器、配置/受众推断、加密库、审计链、插件装配与 pre/post 钩子。
+当前 19 项：检测器、配置/受众推断、加密库、审计链、插件装配与 pre/post 钩子。
 
 ## 数据
 

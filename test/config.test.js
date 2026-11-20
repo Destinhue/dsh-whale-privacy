@@ -73,3 +73,19 @@ test('explicit audience override wins over inference', () => {
   assert.equal(decision.audience, 'private');
   assert.equal(decision.wouldBlock, false);
 });
+
+
+test('unknown audience defaults to warn, can be raised to block or lowered to allow', () => {
+  const args = { message: '他住在朝阳区' };
+  const warn = evaluate({ tool: 'send_message', args, config: normalizeConfig({}), terms: ['朝阳区'] });
+  assert.equal(warn.audience, 'unknown');
+  assert.equal(warn.wouldBlock, false);
+  assert.deepEqual(warn.warned.map((item) => item.category), ['private-term']);
+
+  const block = evaluate({ tool: 'send_message', args, config: normalizeConfig({ unknownAudience: 'block' }), terms: ['朝阳区'] });
+  assert.equal(block.wouldBlock, true);
+
+  const allow = evaluate({ tool: 'send_message', args, config: normalizeConfig({ unknownAudience: 'allow' }), terms: ['朝阳区'] });
+  assert.equal(allow.wouldBlock, false);
+  assert.equal(allow.warned.length, 0);
+});
