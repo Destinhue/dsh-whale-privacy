@@ -4,3 +4,4 @@ vault.enc
 audit.jsonl
 *.log
 .DS_Store
+release/
