@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Privacy Guard",
+    "description": "Audience-aware privacy for DSH: private facts cannot reach groups or public posts. Encrypted scoped vault, outbound gate, hash-chain audit.",
+    "detail": "docs/DETAIL.md"
+  }
+}
